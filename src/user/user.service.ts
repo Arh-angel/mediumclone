@@ -62,7 +62,13 @@ export class UserService {
       );
     }
 
+    delete user.password;
+
     return user;
+  }
+
+  findUserById(id: number): Promise<UserEntity> {
+    return this.userRepository.findOneBy({ id });
   }
 
   generateJwt(user: UserEntity): string {
@@ -85,19 +91,14 @@ export class UserService {
     };
   }
 
-  // findAll() {
-  //   return `This action returns all user`;
-  // }
+  async updateUser(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id });
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
+    Object.assign(user, updateUserDto);
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+    return await this.userRepository.save(user);
+  }
 }

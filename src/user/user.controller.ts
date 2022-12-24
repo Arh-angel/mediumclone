@@ -1,15 +1,32 @@
+import { UserEntity } from './entities/user.entity';
 import {
   Controller,
   Post,
   Body,
   ValidationPipe,
   UsePipes,
+  Get,
+  Param,
+  Req,
+  UseGuards,
+  Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponseInterface } from './types/userResponse.interface';
-import { ApiBody } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
+  ApiHeaders,
+  ApiProperty,
+} from '@nestjs/swagger';
 import { LoginUserDto } from './dto/login-user.dto';
+import { Request } from 'express';
+import { ExpressRequestInterface } from '../types/expressRequest.interface';
+import { User } from './decorators/user.decorator';
+import { AuthGuard } from './guards/auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller()
 export class UserController {
@@ -42,10 +59,30 @@ export class UserController {
   //   return this.userService.findAll();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id);
-  // }
+  @ApiBearerAuth('token')
+  @ApiHeader({
+    name: 'Authorization',
+  })
+  @Get('user')
+  @UseGuards(AuthGuard)
+  async currentUser(@User() user: UserEntity): Promise<UserResponseInterface> {
+    return await this.userService.buildUserResponse(user);
+  }
+
+  @ApiBearerAuth('token')
+  @ApiHeader({
+    name: 'Authorization',
+  })
+  @ApiBody({ description: 'updateUserDto' })
+  @Put('user')
+  @UseGuards(AuthGuard)
+  async updateUser(
+    @User('id') id: number,
+    @Body('user') updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseInterface> {
+    const updateUser = await this.userService.updateUser(id, updateUserDto);
+    return await this.userService.buildUserResponse(updateUser);
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
