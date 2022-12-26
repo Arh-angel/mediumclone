@@ -115,4 +115,38 @@ export class ArticleController {
 
     return await this.articleService.buildArticleResponse(article);
   }
+
+  @ApiBearerAuth('token')
+  @ApiHeader({
+    name: 'Authorization',
+  })
+  @ApiBody({ description: 'favoritesArticleDto' })
+  @Post(':slug/favorite')
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
+  async addArticleFavorites(
+    @User('id') userId: number,
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponseInterface> {
+    const article = await this.articleService.addArticleFavorites(userId, slug);
+
+    return await this.articleService.buildArticleResponse(article);
+  }
+
+  @ApiBearerAuth('token')
+  @ApiHeader({
+    name: 'Authorization',
+  })
+  @ApiBody({ description: 'favoritesArticleDto' })
+  @Delete(':slug/favorite')
+  @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
+  async deleteArticleFavorites(
+    @User('id') userId: number,
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponseInterface> {
+    const article = await this.articleService.addArticleFavorites(userId, slug);
+
+    return await this.articleService.buildArticleResponse(article);
+  }
 }
