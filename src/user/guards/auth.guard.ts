@@ -5,15 +5,11 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import * as request from 'supertest';
 import { ExpressRequestInterface } from '../../types/expressRequest.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const request = context
       .switchToHttp()
       .getRequest<ExpressRequestInterface>();

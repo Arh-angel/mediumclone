@@ -6,6 +6,7 @@ import { TagModule } from './tag/tag.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthMiddleware } from './user/middlewares/auth.middleware';
+import { ArticleModule } from './article/article.module';
 import * as request from 'supertest';
 
 @Module({
@@ -27,6 +28,7 @@ import * as request from 'supertest';
     }),
     TagModule,
     UserModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
