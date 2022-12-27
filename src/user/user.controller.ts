@@ -17,6 +17,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { User } from './decorators/user.decorator';
 import { AuthGuard } from './guards/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { BackendValidationPipe } from '@app/shared/pipes/backendValidation.pipe';
 
 @ApiTags('User')
 @Controller()
@@ -25,7 +26,7 @@ export class UserController {
 
   @ApiBody({ description: 'createUserDto' })
   @Post('users')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async create(
     @Body('user') createUserDto: CreateUserDto,
   ): Promise<UserResponseInterface> {
@@ -36,7 +37,7 @@ export class UserController {
 
   @ApiBody({ description: 'loginUserDto' })
   @Post('users/login')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async login(
     @Body('user') loginUserDto: LoginUserDto,
   ): Promise<UserResponseInterface> {

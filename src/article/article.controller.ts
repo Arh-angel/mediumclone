@@ -1,3 +1,4 @@
+import { BackendValidationPipe } from '@app/shared/pipes/backendValidation.pipe';
 import { User } from '@app/user/decorators/user.decorator';
 import { UserEntity } from '@app/user/entities/user.entity';
 import { AuthGuard } from '@app/user/guards/auth.guard';
@@ -33,13 +34,8 @@ import { ArticlesResponseInterface } from './types/articlesResponse.interface';
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
-  @ApiBearerAuth('token')
-  @ApiHeader({
-    name: 'Authorization',
-  })
   @ApiQuery({})
   @Get()
-  @UseGuards(AuthGuard)
   async findAll(
     @User('id') userId: number,
     @Query() query: any,
@@ -51,10 +47,24 @@ export class ArticleController {
   @ApiHeader({
     name: 'Authorization',
   })
+  @ApiQuery({})
+  @Get('/feed')
+  @UseGuards(AuthGuard)
+  async getFeed(
+    @User('id') userId: number,
+    @Query() query: any,
+  ): Promise<ArticlesResponseInterface> {
+    return await this.articleService.getFeed(userId, query);
+  }
+
+  @ApiBearerAuth('token')
+  @ApiHeader({
+    name: 'Authorization',
+  })
   @ApiBody({ description: 'createArticleDto' })
   @Post()
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async create(
     @User() currentUser: UserEntity,
     @Body('article') createArticleDto: CreateArticleDto,
@@ -100,7 +110,7 @@ export class ArticleController {
   @ApiBody({ description: 'updateArticleDto' })
   @ApiParam({ name: 'slug' })
   @Put(':slug')
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   @UseGuards(AuthGuard)
   async updateArticle(
     @User('id') userId: number,
@@ -123,7 +133,7 @@ export class ArticleController {
   @ApiBody({ description: 'favoritesArticleDto' })
   @Post(':slug/favorite')
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async addArticleFavorites(
     @User('id') userId: number,
     @Param('slug') slug: string,
@@ -140,7 +150,7 @@ export class ArticleController {
   @ApiBody({ description: 'favoritesArticleDto' })
   @Delete(':slug/favorite')
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async deleteArticleFavorites(
     @User('id') userId: number,
     @Param('slug') slug: string,
